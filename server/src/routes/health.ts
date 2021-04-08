@@ -1,11 +1,11 @@
 import { Request, Response, Router as ExpressRouter } from 'express';
-import { Pool } from 'pg';
+import { Connection } from 'mysql';
 
 import toAsyncRouter from '../middleware/asyncRouter'
 
 export default class HealthRouter {
 	constructor(
-		private pool: Pool,
+		private db: Connection,
 	) {}
 
 	public routes(): ExpressRouter {
@@ -21,7 +21,7 @@ export default class HealthRouter {
 
 	private async health(_: Request, res: Response) {
 		try {
-      await this.pool.query(`SELECT id FROM Experiment LIMIT 1`);
+      await this.db.query(`SELECT 1`);
 			res.json({status: 'ok'});
 		} catch (e) {
 			console.log(e);
