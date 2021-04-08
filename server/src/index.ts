@@ -1,13 +1,12 @@
 import express from 'express';
-import mysql from 'mysql';
+import mysql from 'mysql2';
 
 import Config from './config';
 import logMiddleware from './middleware/logger';
 import errMiddleware from './middleware/errors';
-import HealthRouter from './routes/health';
+import HealthRouter from './api/health/router';
 
 const app = express();
-const PORT = 8000;
 
 const BASE_PATH = '/api/v1'
 
@@ -24,8 +23,8 @@ async function main() {
   app.use(BASE_PATH, healthRouter.routes());
 
   // begin serving traffic
-  await app.listen(3001, () => {
-    console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
+  await app.listen(config.port, () => {
+    console.log(`⚡️[server]: Server is running at https://localhost:${config.port}`);
   }).on('error', (err) => {
     throw(err);
   });

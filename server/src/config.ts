@@ -1,4 +1,4 @@
-import { ConnectionConfig } from 'mysql';
+import { ConnectionOptions } from 'mysql2';
 
 const ENV_BASE='FEATURE_BEE';
 
@@ -13,16 +13,13 @@ export default class Config {
         public db_port: number,
         public db_name: string,
         public db_user: string,
-        public db_password: string,
     ) {}
 
-    public dbOptions(): ConnectionConfig {
+    public dbOptions(): ConnectionOptions {
         return {
             host: this.db_host,
-            port: this.db_port,
             database: this.db_name,
             user: this.db_user,
-            password: this.db_password,
         }
     }
 
@@ -33,7 +30,6 @@ export default class Config {
             parseInt(env[`${ENV_BASE}_DB_PORT`] || '3306'),
             env[`${ENV_BASE}_DB_NAME`] || 'feature_bee',
             env[`${ENV_BASE}_DB_USER`] || 'root',
-            env[`${ENV_BASE}_DB_PASSWORD`] || '',
         );
     }
 }

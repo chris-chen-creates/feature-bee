@@ -1,7 +1,7 @@
 import { Request, Response, Router as ExpressRouter } from 'express';
-import { Connection } from 'mysql';
+import { Connection } from 'mysql2';
 
-import toAsyncRouter from '../middleware/asyncRouter'
+import toAsyncRouter from '../../middleware/asyncRouter'
 
 export default class HealthRouter {
 	constructor(
@@ -21,7 +21,7 @@ export default class HealthRouter {
 
 	private async health(_: Request, res: Response) {
 		try {
-      await this.db.query(`SELECT 1`);
+      await this.db.promise().query(`SELECT 1`);
 			res.json({status: 'ok'});
 		} catch (e) {
 			console.log(e);
