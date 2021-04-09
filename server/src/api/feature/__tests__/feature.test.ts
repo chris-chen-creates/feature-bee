@@ -1,21 +1,28 @@
-import { Connection } from 'mysql2';
+import mysql from 'mysql2';
 
-import Config from '../config';
+import Config from '../../../config';
 import FeatureController from '../controller';
 import FeatureDAO from '../model';
 
-const config = Config.readFromEnvironment();
-const db = mysql.createConnection(config.dbOptions());
+
+function getController() {
+  const config = Config.readFromEnvironment();
+  const db = mysql.createConnection(config.dbOptions());
+  return new FeatureController(new FeatureDAO(db));
+}
 
 test('create feature works properly', async () => {
-  const featureController = new FeatureController(new FeatureDAO(db));
-  await featureController.createFeature({
+  const controller = getController();
+
+  await controller.createFeature({
     name: 'test',
     active: false,
   });
-  expect(await featureController.listFeatures()).toEqual([{
+
+  const features = await controller.listFeatures();
+  expect(features).toEqual([{
     id: 1,
     name: 'test',
-    active: false,
+    active: 0, // booleans get converted to integers
   }]);
 });

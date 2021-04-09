@@ -1,5 +1,7 @@
 import { Connection } from 'mysql2';
 
+import { toObj } from '../../utils/db';
+
 export default class FeatureDAO {
   constructor(
     private db: Connection,
@@ -28,8 +30,9 @@ export default class FeatureDAO {
   }
 
   public async listFeatures() {
-    return (await this.db.promise().query(
+    const features = (await this.db.promise().query(
       `SELECT id, name, active FROM Feature`,
     ))[0];
+    return toObj(features);
   }
 }
