@@ -4,7 +4,10 @@ import mysql from 'mysql2';
 import Config from './config';
 import logMiddleware from './middleware/logger';
 import errMiddleware from './middleware/errors';
+
 import HealthRouter from './api/health/router';
+
+import { createFeatureRouter } from './api/feature/router';
 
 const app = express();
 
@@ -14,6 +17,7 @@ async function main() {
   const config = Config.readFromEnvironment();
   const db = mysql.createConnection(config.dbOptions());
   const healthRouter = new HealthRouter(db);
+  const featureRouter = createFeatureRouter(db);
 
   // apply middleware
   app.use(express.json());
@@ -21,6 +25,7 @@ async function main() {
 
   // setup routers
   app.use(BASE_PATH, healthRouter.routes());
+  app.use(BASE_PATH, featureRouter.routes());
 
   // begin serving traffic
   await app.listen(config.port, () => {
