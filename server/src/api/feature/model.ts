@@ -29,7 +29,7 @@ export default class FeatureDAO {
 
   public async listFeatures() {
     return (await this.db.promise().query(
-      `SELECT * FROM Feature`,
+      `SELECT id, name, active FROM Feature`,
     ))[0];
   }
 }

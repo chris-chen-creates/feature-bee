@@ -5,7 +5,7 @@
   "main": "node build/index.js",
   "scripts": {
     "start": "nodemon src/index.ts",
-    "test": "jest",
+    "test": "FEATURE_BEE_DATABASE_NAME=feature_bee_test jest",
     "build": "tsc"
   },
   "author": "",
