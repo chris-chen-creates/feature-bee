@@ -8,7 +8,7 @@ const config = Config.readFromEnvironment();
 const db = mysql.createConnection(config.dbOptions());
 const controller = new FeatureController(new FeatureDAO(db));
 
-test('create feature works', async () => {
+test('create feature works as intended', async () => {
   const featureId = await controller.createFeature({
     name: 'test',
     active: false,
