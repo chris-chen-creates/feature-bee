@@ -8,8 +8,9 @@ export default class FeatureController {
   public async createFeature(feature: {
     name: string;
     active: boolean;
-  }) {
-    await this.dao.createFeature(feature);    
+  }): Promise<number> {
+    const featureId = await this.dao.createFeature(feature);    
+    return 0;
   }
 
   public async getFeature() {

@@ -1,6 +1,6 @@
 import { Connection } from 'mysql2';
 
-import { toObj } from '../../utils/db';
+import { toObj, lastInsertId } from '../../utils/db';
 
 export default class FeatureDAO {
   constructor(
@@ -10,11 +10,12 @@ export default class FeatureDAO {
   public async createFeature({name, active}: {
     name: string;
     active: boolean;
-  }) {
-    await this.db.promise().query(
+  }): Promise<number> {
+    const feature = await this.db.execute(
       `INSERT INTO Feature(name, active) VALUES (?, ?)`,
       [name, active],
-    );
+    ) as any;
+    return await lastInsertId(this.db);
   }
 
   public async getFeature() {
