@@ -23,9 +23,12 @@ export default class FeatureDAO {
     const features = (
       await this.db
         .promise()
-        .query(`SELECT id, name, active FROM Feature WHERE id = ?`, [id])
+        .query(
+          `SELECT id, name, active, deleted_at FROM Feature WHERE id = ?`,
+          [id]
+        )
     )[0]
-    return toObj(features)
+    return toObj(features)[0]
   }
 
   public async updateFeature(feature: Feature) {
@@ -37,14 +40,16 @@ export default class FeatureDAO {
 
   public async deleteFeature(feature: Feature) {
     await this.db.execute(
-      'ALTER TABLE Feature ADD COLUMN deletedAt TIMESTAMP WHERE id = ?',
+      'UPDATE Feature SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?',
       [feature.id]
     )
   }
 
   public async listFeatures() {
     const features = (
-      await this.db.promise().query(`SELECT id, name, active FROM Feature`)
+      await this.db
+        .promise()
+        .query(`SELECT id, name, active FROM Feature WHERE deleted_at IS NULL`)
     )[0]
     return toObj(features)
   }

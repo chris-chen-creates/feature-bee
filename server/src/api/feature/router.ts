@@ -2,6 +2,7 @@ import { Request, Response, Router as ExpressRouter } from 'express'
 import { Connection } from 'mysql2'
 
 import toAsyncRouter from '../../middleware/asyncRouter'
+import errorMiddleware from '../../middleware/errors'
 import FeatureController from './controller'
 import FeatureDAO from './model'
 
@@ -18,7 +19,7 @@ export class FeatureRouter {
     router.get('/feature/:id', this.getFeature.bind(this))
     router.put('/feature', this.updateFeature.bind(this))
     router.delete('/feature', this.deleteFeature.bind(this))
-    router.get('/feature/list', this.listFeatures.bind(this))
+    router.get('/featurelist', this.listFeatures.bind(this))
     return router
   }
 
@@ -29,6 +30,9 @@ export class FeatureRouter {
 
   private async getFeature(req: Request, res: Response) {
     const id = parseInt(req.params.id)
+    // if (id === null) {
+    //   res.json({ status: 'invalid id' })
+    // }
     res.json(await this.controller.getFeature(id))
   }
 
