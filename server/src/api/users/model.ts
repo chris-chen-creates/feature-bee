@@ -30,6 +30,7 @@ export default class UserDAO {
   }
 
   public async loginUser(username: string, password: string): Promise<string> {
+    console.log(username)
     const verifyUser = await this.db.execute(
       `SELECT username FROM Users WHERE username = ?`,
       [username]

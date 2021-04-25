@@ -14,6 +14,7 @@ export default class UserController {
   }
 
   public async login({ username, password }: Credentials): Promise<string> {
+    await this.dao.loginUser(username, password)
     return ''
   }
 }

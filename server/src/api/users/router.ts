@@ -25,6 +25,6 @@ export class UserRouter {
   }
 
   private async login(req: Request, res: Response) {
-    const userLogin = await this.controller.login(req.body)
+    await this.controller.login(req.body)
   }
 }
