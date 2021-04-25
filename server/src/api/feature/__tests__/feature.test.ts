@@ -98,13 +98,8 @@ test('list features combined with delete works as intended', async () => {
   })
 
   const feature = await controller.listFeatures()
-  expect(feature).toEqual([
-    {
-      id: 2,
-      name: 'test-update',
-      active: 1,
-    },
-  ])
+  const names = feature.map((feature: { name: any }) => feature.name)
+  expect(names.includes('combo-breaker-list')).toBeFalsy()
 })
 
 test('trying to see if a chain of commands breaks', async () => {

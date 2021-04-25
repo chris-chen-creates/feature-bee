@@ -30,9 +30,9 @@ export class FeatureRouter {
 
   private async getFeature(req: Request, res: Response) {
     const id = parseInt(req.params.id)
-    // if (id === null) {
-    //   res.json({ status: 'invalid id' })
-    // }
+    if (id === null) {
+      res.status(400).json({ error: 'id is needed for feature call' })
+    }
     res.json(await this.controller.getFeature(id))
   }
 
