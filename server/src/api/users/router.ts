@@ -15,11 +15,16 @@ export class UserRouter {
   public routes(): ExpressRouter {
     const router = toAsyncRouter(ExpressRouter())
     router.post('/register', this.register.bind(this))
+    router.get('/login', this.login.bind(this))
     return router
   }
 
   private async register(req: Request, res: Response) {
     const token = await this.controller.register(req.body)
     res.json({ token: token })
+  }
+
+  private async login(req: Request, res: Response) {
+    const userLogin = await this.controller.login(req.body)
   }
 }
