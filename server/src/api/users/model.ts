@@ -7,8 +7,8 @@ export default class UserDAO {
   constructor(private db: Connection) {}
 
   public async createUser(username: string, password: string): Promise<number> {
-    var md5 = require('md5')
-    var hash = md5(password)
+    let md5 = require('md5')
+    let hash = md5(password)
     const user = (await this.db.execute(
       `INSERT INTO Users(username, password_hash) VALUES (?, ?)`,
       [username, hash]
@@ -29,13 +29,25 @@ export default class UserDAO {
     return rows[0].session_token
   }
 
-  public async loginUser(username: string, password: string): Promise<string> {
-    console.log(username)
-    const verifyUser = await this.db.execute(
-      `SELECT username FROM Users WHERE username = ?`,
-      [username]
-    )
-
-    return ''
+  public async loginUser(
+    username: string,
+    password: string
+  ): Promise<number | undefined> {
+    let md5 = require('md5')
+    let hash = md5(password)
+    console.log(password)
+    let verifyUser = (
+      await this.db
+        .promise()
+        .query(
+          `SELECT id, username, password_hash FROM Users WHERE username = ? AND password_hash = ?`,
+          [username, hash]
+        )
+    )[0]
+    let checkUser = toObj(verifyUser)
+    if (checkUser.length === 0) {
+      return undefined
+    }
+    return checkUser[0].id
   }
 }

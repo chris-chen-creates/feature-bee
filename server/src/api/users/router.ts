@@ -4,6 +4,7 @@ import { Connection } from 'mysql2'
 import toAsyncRouter from '../../middleware/asyncRouter'
 import UserController from './controller'
 import UserDAO from './model'
+import { LoginError } from './controller'
 
 export function createUserRouter(db: Connection): UserRouter {
   return new UserRouter(new UserController(new UserDAO(db)))
@@ -15,7 +16,7 @@ export class UserRouter {
   public routes(): ExpressRouter {
     const router = toAsyncRouter(ExpressRouter())
     router.post('/register', this.register.bind(this))
-    router.get('/login', this.login.bind(this))
+    router.post('/login', this.login.bind(this))
     return router
   }
 
@@ -25,6 +26,14 @@ export class UserRouter {
   }
 
   private async login(req: Request, res: Response) {
-    await this.controller.login(req.body)
+    try {
+      const token = await this.controller.login(req.body)
+      res.json({ token: token })
+    } catch (e) {
+      if (e instanceof LoginError) {
+        res.status(403).json({ error: 'incorrect credentials' })
+      }
+      throw e
+    }
   }
 }

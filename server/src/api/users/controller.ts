@@ -5,6 +5,8 @@ interface Credentials {
   password: string
 }
 
+export class LoginError extends Error {}
+
 export default class UserController {
   constructor(private dao: UserDAO) {}
 
@@ -13,8 +15,14 @@ export default class UserController {
     return await this.dao.createSession(userId)
   }
 
-  public async login({ username, password }: Credentials): Promise<string> {
-    await this.dao.loginUser(username, password)
-    return ''
+  public async login(credentials: Credentials): Promise<string> {
+    const userId = await this.dao.loginUser(
+      credentials.username,
+      credentials.password
+    )
+    if (userId === undefined) {
+      throw new LoginError('User not found')
+    }
+    return await this.dao.createSession(userId)
   }
 }
