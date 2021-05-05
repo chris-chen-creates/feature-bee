@@ -35,7 +35,6 @@ export default class UserDAO {
   ): Promise<number | undefined> {
     let md5 = require('md5')
     let hash = md5(password)
-    console.log(password)
     let verifyUser = (
       await this.db
         .promise()

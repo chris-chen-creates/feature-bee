@@ -20,7 +20,9 @@ export default class UserController {
       credentials.username,
       credentials.password
     )
+    console.log('before if:' + userId)
     if (userId === undefined) {
+      console.log(userId)
       throw new LoginError('User not found')
     }
     return await this.dao.createSession(userId)
