@@ -25,6 +25,8 @@ export class FeatureRouter {
 
   private async createFeature(req: Request, res: Response) {
     const featureId = await this.controller.createFeature(req.body)
+    req.headers['auth_token']
+    console.log(`header auth token: ${req.headers['auth']}`)
     res.json({ status: 'ok', featureId: featureId })
   }
 
