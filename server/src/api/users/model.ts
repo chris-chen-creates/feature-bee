@@ -1,13 +1,12 @@
 import { request } from 'express'
 import { Connection } from 'mysql2'
-
 import { toObj, lastInsertId } from '../../utils/db'
+const md5 = require('md5')
 
 export default class UserDAO {
   constructor(private db: Connection) {}
 
   public async createUser(username: string, password: string): Promise<number> {
-    let md5 = require('md5')
     let hash = md5(password)
     const user = (await this.db.execute(
       `INSERT INTO Users(username, password_hash) VALUES (?, ?)`,
@@ -25,7 +24,7 @@ export default class UserDAO {
     const result = await this.db
       .promise()
       .query('SELECT session_token FROM Sessions WHERE id = ?', [sessionId])
-    const rows = toObj(((result as unknown) as any)[0]) as any
+    const rows = toObj((result as unknown as any)[0]) as any
     return rows[0].session_token
   }
 
@@ -33,7 +32,6 @@ export default class UserDAO {
     username: string,
     password: string
   ): Promise<number | undefined> {
-    let md5 = require('md5')
     let hash = md5(password)
     let verifyUser = (
       await this.db

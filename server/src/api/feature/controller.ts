@@ -3,8 +3,10 @@ import FeatureDAO, { Feature } from './model'
 export default class FeatureController {
   constructor(private dao: FeatureDAO) {}
 
-  public async createFeature(feature: Feature): Promise<number> {
-    const featureId = await this.dao.createFeature(feature)
+  public async createFeature(feature: Feature, token: string): Promise<number> {
+    const userId = await this.dao.getUserIdFromSession(token)
+    console.log(`first userid: ${userId}`)
+    const featureId = await this.dao.createFeature(feature, userId)
     return featureId
   }
 

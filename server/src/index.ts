@@ -26,6 +26,7 @@ async function main() {
   app.use(logMiddleware)
 
   // setup routers
+  //app.use()
   app.use(BASE_PATH, healthRouter.routes())
   app.use(BASE_PATH, featureRouter.routes())
   app.use(BASE_PATH, userRouter.routes())
