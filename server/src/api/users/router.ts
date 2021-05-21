@@ -32,6 +32,7 @@ export class UserRouter {
     } catch (e) {
       if (e instanceof LoginError) {
         res.status(403).json({ error: 'incorrect credentials' })
+        return
       }
       throw e
     }

@@ -7,9 +7,7 @@ export interface Feature {
   id?: number
   name?: string
   active?: boolean
-  userId?: number
 }
-
 export default class FeatureDAO {
   constructor(private db: Connection) {}
 
@@ -17,7 +15,6 @@ export default class FeatureDAO {
     { name, active }: Feature,
     userId: number
   ): Promise<number> {
-    console.log(`userId: ${userId}`)
     await this.db.execute(
       `INSERT INTO Feature(name, active, created_by) VALUES (?, ?, ?)`,
       [name, active, userId]
@@ -26,15 +23,14 @@ export default class FeatureDAO {
   }
 
   public async getFeature(id: number) {
-    const features = (
-      await this.db
-        .promise()
-        .query(
-          `SELECT id, name, active, created_by, deleted_at FROM Feature WHERE id = ?`,
-          [id]
-        )
-    )[0]
-    return toObj(features)[0]
+    const features = await this.db
+      .promise()
+      .query(
+        `SELECT id, name, active, created_by, deleted_at FROM Feature WHERE id = ?`,
+        [id]
+      )
+    let featureCall = toObj(features)[0][0]
+    return toObj(featureCall)
   }
 
   public async updateFeature(feature: Feature) {
@@ -62,18 +58,14 @@ export default class FeatureDAO {
     return toObj(features)
   }
 
-  // function in progress
   public async getUserIdFromSession(token: string): Promise<number> {
     let userId = await this.db
       .promise()
       .query('SELECT id FROM Sessions WHERE session_token = ?', [token])
-    // throw error rather than return undefined
     let userMatch = toObj(userId)[0][0].id
-    console.log(userMatch)
-    // if (userMatch === undefined) {
-    //   throw new LoginError('User does not have access')
-    // }
-    return 0
+    if (userMatch === undefined) {
+      throw new LoginError('User does not have access')
+    }
+    return userMatch
   }
-  // why will the usermatch variable not return anything other than undefined
 }
