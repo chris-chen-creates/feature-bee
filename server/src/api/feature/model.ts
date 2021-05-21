@@ -1,34 +1,36 @@
 import { Connection } from 'mysql2'
 
 import { toObj, lastInsertId } from '../../utils/db'
+import { LoginError } from '../users/controller'
 
 export interface Feature {
   id?: number
   name?: string
   active?: boolean
 }
-
 export default class FeatureDAO {
   constructor(private db: Connection) {}
 
-  public async createFeature({ name, active }: Feature): Promise<number> {
-    await this.db.execute(`INSERT INTO Feature(name, active) VALUES (?, ?)`, [
-      name,
-      active,
-    ])
+  public async createFeature(
+    { name, active }: Feature,
+    userId: number
+  ): Promise<number> {
+    await this.db.execute(
+      `INSERT INTO Feature(name, active, created_by) VALUES (?, ?, ?)`,
+      [name, active, userId]
+    )
     return await lastInsertId(this.db)
   }
 
   public async getFeature(id: number) {
-    const features = (
-      await this.db
-        .promise()
-        .query(
-          `SELECT id, name, active, deleted_at FROM Feature WHERE id = ?`,
-          [id]
-        )
-    )[0]
-    return toObj(features)[0]
+    const features = await this.db
+      .promise()
+      .query(
+        `SELECT id, name, active, created_by, deleted_at FROM Feature WHERE id = ?`,
+        [id]
+      )
+    let featureCall = toObj(features)[0][0]
+    return toObj(featureCall)
   }
 
   public async updateFeature(feature: Feature) {
@@ -49,8 +51,21 @@ export default class FeatureDAO {
     const features = (
       await this.db
         .promise()
-        .query(`SELECT id, name, active FROM Feature WHERE deleted_at IS NULL`)
+        .query(
+          `SELECT id, name, active, created_by FROM Feature WHERE deleted_at IS NULL`
+        )
     )[0]
     return toObj(features)
+  }
+
+  public async getUserIdFromSession(token: string): Promise<number> {
+    let userId = await this.db
+      .promise()
+      .query('SELECT id FROM Sessions WHERE session_token = ?', [token])
+    let userMatch = toObj(userId)[0][0].id
+    if (userMatch === undefined) {
+      throw new LoginError('User does not have access')
+    }
+    return userMatch
   }
 }
