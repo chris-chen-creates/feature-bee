@@ -1,7 +1,8 @@
 import { Connection } from 'mysql2'
 
-export function toObj(rows: any): any[] {
-  return JSON.parse(JSON.stringify(rows))
+
+export function toObj(rows: any): any {
+  return JSON.parse(JSON.stringify(rows));
 }
 
 // sometimes javascript makes me really sad
